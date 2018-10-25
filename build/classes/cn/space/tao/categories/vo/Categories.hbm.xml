@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+	"-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+	"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="cn.itcase.tao.categories.vo.Categories" table="categories">
+		<id name="id" column="id" type="integer">
+			<generator class="native"></generator>
+		</id>
+		
+		<property name="categories" column="categories"  type="string" />	
+		
+		<!-- 配置二级分类的集合 -->
+		<set name="categoriesInfo" lazy="false">
+			<key column="cid" />
+			<one-to-many class="cn.itcase.tao.categoriesinfo.vo.CategoriesInfo" />
+		</set>
+		
+	</class>
+</hibernate-mapping>

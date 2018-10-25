@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/aop
+	http://www.springframework.org/schema/aop/spring-aop.xsd
+	http://www.springframework.org/schema/tx 
+	http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+	<!-- 配置连接池： -->
+	<!-- 引入外部属性文件 -->
+	<context:property-placeholder location="classpath:jdbc.properties" />
+	<!-- 配置C3P0连接池： -->
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<property name="driverClass" value="${jdbc.driver}" />
+		<property name="jdbcUrl" value="${jdbc.url}" />
+		<property name="user" value="${jdbc.user}" />
+		<property name="password" value="${jdbc.password}" />
+	</bean>
+
+	<!-- hibernate相关信息 -->
+	<bean id="sessionFactory" class=" org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+		<!-- 注入连接池 -->
+		<property name="dataSource" ref="dataSource" />
+		<!-- 配置Hibernate的其他属性 -->
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+				<!-- 控制台打印sql语句 -->
+				<prop key="hibernate.show_sql">true</prop>
+				<!-- 打印sql语句前，现将sql语句格式化 -->
+				<prop key="hibernate.format_sql">true</prop>
+				<!-- 生成表结构的策略配置,最常用的取值update-->
+				<prop key="hibernate.hbm2ddl.auto">update</prop>
+				<prop key="hibernate.connection.autocommit">false</prop>
+			</props>
+		</property>
+		
+		<!-- 配置Hibernate的映射文件 -->
+		<property name="mappingResources">
+			<list>
+				<value>cn/itcase/tao/user/vo/User.hbm.xml</value>
+				<value>cn/itcase/tao/categories/vo/Categories.hbm.xml</value>
+				<value>cn/itcase/tao/items/vo/Items.hbm.xml</value>
+				<value>cn/itcase/tao/categoriesinfo/vo/CategoriesInfo.hbm.xml</value>
+			</list>
+		</property>
+		
+	</bean>
+	
+	<!-- 事务管理： -->
+	<!-- 事务管理器 -->
+	<bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager" >
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	
+	<!-- 开启注解事务 -->
+	<tx:annotation-driven transaction-manager="transactionManager" />
+
+	<!-- Action的配置 ========================================-->
+		<!-- 首页访问的Action -->
+		<bean id="indexAction" class="cn.itcase.tao.index.action.IndexAction" scope="prototype">
+			<!-- 首页一级分类Action-->
+			<property name="categoriesService" ref="categoriesService"></property>
+			<property name="itemsService" ref="itemsService"></property>
+			
+		</bean>
+	
+		<!-- 用户模块 Action -->
+		<bean id="userAction" class="cn.itcase.tao.user.action.UserAction" scope="prototype">
+			<!-- 注入Service -->
+			<property name="userService" ref="userService" />
+		</bean>
+		
+		<!-- 商品模块的Action -->
+		<bean id="itemsAction" class="cn.itcase.tao.items.action.ItemsAction" scope="prototype">
+			<property name="itemsService" ref="itemsService" />
+		</bean>
+		
+		<!-- 购物车Action -->
+		<bean id="cartAction" class="cn.itcase.tao.cart.action.CartAction" scope="prototype" > 
+			<property name="itemsService" ref="itemsService"></property>
+		</bean>
+		
+		<!-- 设置Setting  Actiong -->
+		<bean id="settingAction" class="cn.itcase.tao.setting.action.SettingAction" scope="prototype">
+		
+		</bean>
+		
+		<!-- 搜索Search -->
+		<bean id="searchAction" class="cn.itcase.tao.search.action.SearchAction" scope="prototype">
+			<property name="searchService" ref="searchService"></property>
+		</bean>
+		
+	
+	<!-- Service的配置 ========================================-->
+		<!-- 用户模块Service -->
+		<bean id="userService" class="cn.itcase.tao.user.service.UserService">
+			<!-- 注入Dao-->
+			<property name="userDao" ref="userDao" />
+		</bean>
+		
+		<!-- 首页一级分类 -->
+		<bean id="categoriesService" class="cn.itcase.tao.categories.service.CategoriesService">
+			<property name="categoriesDao" ref="categoriesDao"></property>
+		</bean>
+		
+		<!-- 商品 -->
+		<bean id="itemsService" class="cn.itcase.tao.items.service.ItemsService">
+			<property name="itemsDao" ref="itemsDao"></property>			
+		</bean>
+		
+		<!-- 搜索Search  -->
+		<bean id="searchService" class="cn.itcase.tao.search.service.SearchService">
+			<property name="searchDao" ref="searchDao"></property>
+		</bean>
+		
+		
+	<!-- Dao的配置 ========================================-->
+		<!-- 用户模块 Dao -->
+		<bean id="userDao" class="cn.itcase.tao.user.dao.UserDao">
+			<property name="sessionFactory" ref="sessionFactory" />
+		</bean>
+		
+		<!-- 首页一级分类 -->
+		<bean id="categoriesDao" class="cn.itcase.tao.categories.dao.CategoriesDao">
+			<property name="sessionFactory" ref="sessionFactory"></property>
+		</bean>
+		
+		<!-- 商品 -->
+		<bean id="itemsDao" class="cn.itcase.tao.items.dao.ItemsDao">
+			<property name="sessionFactory" ref="sessionFactory"></property>
+		</bean> 
+		
+		<!-- 搜索 Search -->
+		<bean id="searchDao" class="cn.itcase.tao.search.dao.SearchDao">
+			<property name="sessionFactory" ref="sessionFactory"></property>
+		</bean>
+		
+</beans>

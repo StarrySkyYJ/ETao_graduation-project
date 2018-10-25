@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+	"-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+	"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="cn.itcase.tao.items.vo.Items" table="items">
+		<id name="id" column="id" type="integer" >
+			<generator class="native"></generator>
+		</id>
+		
+		<property name="itemsname" column="itemsname" type="string" />
+		<property name="price" column="price" type="double" />
+		<property name="num" column="num" type="integer" />
+		<property name="ishot" column="ishot" type="integer" />
+		<property name="describes" column="describes" type="string" />
+		<property name="ioinfo" column="ioinfo" type="string" />
+		<property name="times" column="times" type="date" />
+		<property name="image" column="image" type="string" />
+		
+	</class>
+</hibernate-mapping>

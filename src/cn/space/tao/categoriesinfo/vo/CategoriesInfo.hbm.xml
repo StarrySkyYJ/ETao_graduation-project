@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+	"-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+	"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="cn.itcase.tao.categoriesinfo.vo.CategoriesInfo" table="categoriesinfo">
+		<id name="id" column="id" type="integer" >
+			<generator class="native"></generator>
+		</id>
+		
+		<property name="cname" column="cname" type="string" ></property>
+		<many-to-one name="categories" column="cid" class="cn.itcase.tao.categories.vo.Categories" />
+	
+	</class>
+</hibernate-mapping>
